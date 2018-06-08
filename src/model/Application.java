@@ -14,6 +14,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+//import org.apache.commons.cli.CommandLine;
+
 import java.awt.Font;
 import java.awt.TextArea;
 
@@ -76,11 +78,13 @@ public class Application {
 	private static int currentDisplaySolution = 0 ;
 	private SolutionExtractor solEx;
 
-	//TODO: change cplex_path back to ""
-	private static String cplexjar_path = "/Applications/CPLEX_Studio128/cplex/lib/cplex.jar"; //TO SPEEDUP DEBUG
-	private static String cplexlib_path = "/Applications/CPLEX_Studio128/cplex/lib/cplex.jar"; //TO SPEEDUP DEBUG
+	private static String configfile_path = System.getProperty("user.dir")+File.separator+"config.properties"; //TO SPEEDUP DEBUG
+	
+	private static String cplexjar_path = ""; 
+	private static String cplexlib_path = ""; 
+	
 
-	private static String application_path ="."+File.separator+"examples"+File.separator+"timeCalc.txt";
+	private static String application_path =System.getProperty("user.dir")+File.separator+"examples"+File.separator+"timeCalc.txt";
 
 	private JTextArea textArea;
 
@@ -90,7 +94,7 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 
-
+		//CommandLine cl =CommandLineParse.parse(args);
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -121,7 +125,7 @@ public class Application {
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
 
-		File configFile = new File("config.properties");
+		File configFile = new File(configfile_path);
 
 		try {
 			FileReader reader = new FileReader(configFile);
@@ -156,8 +160,9 @@ public class Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,"An error occurred while loading the configuration file. File not found.");
-
 		} 
+		
+		System.err.println("java.library.path is "+System.getProperty("java.library.path"));
 
 		JLabel lblBlockingTimeCalculator = new JLabel("Blocking Time Calculator");
 		frame.getContentPane().add(lblBlockingTimeCalculator, BorderLayout.NORTH);
@@ -407,6 +412,7 @@ public class Application {
 
 		StyledDocument docSolution = solutionTextArea.getStyledDocument();
 
+		/*
 		btnCplex.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String args= "";      
@@ -434,6 +440,7 @@ public class Application {
 				}
 			}
 		});
+		*/
 
 		buttonContinue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
