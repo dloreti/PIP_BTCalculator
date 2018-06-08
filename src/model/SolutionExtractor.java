@@ -41,9 +41,10 @@ public class SolutionExtractor {
 		Style s = docModel.addStyle("small", regular);
 		StyleConstants.setFontSize(s, 15);
 		
-		regular = docSolution.addStyle("regular", def);
-		s = docSolution.addStyle("small", regular);
-		StyleConstants.setFontSize(s, 15);
+		Style def2 = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		Style regular2 = docSolution.addStyle("regular", def2);
+		Style s2 = docSolution.addStyle("small", regular2);
+		StyleConstants.setFontSize(s2, 15);
 		
 		solve();
 	}
@@ -86,10 +87,13 @@ public class SolutionExtractor {
 	public void modelToStringPro() throws BadLocationException { 		
 		docModel.insertString(docModel.getLength(), "Cost Function\nmax(", docModel.getStyle("regular"));
 		for( int i = 0; i < cost.length; i++){
+			String costI ="";
+			if (cost[i] != 1)
+				costI = Integer.toString(cost[i]);
 			if(i == 0) 
-				docModel.insertString(docModel.getLength(), cost[i] + "x", docModel.getStyle("regular"));
+				docModel.insertString(docModel.getLength(), costI + "x", docModel.getStyle("regular"));
 			else 
-				docModel.insertString(docModel.getLength(), " +" + cost[i] + "x" , docModel.getStyle("regular"));
+				docModel.insertString(docModel.getLength(), " +" + costI + "x" , docModel.getStyle("regular"));
 			docModel.insertString(docModel.getLength(), generateSubscript(pedix[i][0])+","+generateSubscript(+pedix[i][1]) , docModel.getStyle("small"));
 		}
 		
@@ -300,18 +304,23 @@ public class SolutionExtractor {
 		return result;
 	}
 	
-	public String solutionToStringPro(int i){
+	public void solutionToStringPro(int i) throws BadLocationException{
 		
-		String result ="Solution number "+(i+1)+":\n";
+		//String result ="Solution number "+(i+1)+":\n";
+		docSolution.insertString(docSolution.getLength(), "Solution number "+(i+1)+":\n" , docSolution.getStyle("regular"));
 		
 		int ncols = solution[i].getNumberOfColumns();
 		int[] values = solution[i].getValues();
 		//result += "Values:\n";
 		for(int j = 0; j < ncols; j++){
-			result += "x" + generateSubscript(pedix[j][0]) + "\u208B" +generateSubscript(+pedix[j][1]) + "= " +  values[j] + ";\n";
+			docSolution.insertString(docSolution.getLength(), "x", docSolution.getStyle("regular"));
+			docSolution.insertString(docSolution.getLength(), generateSubscript(pedix[j][0])+","+generateSubscript(+pedix[j][1]) , docSolution.getStyle("small"));
+			docSolution.insertString(docSolution.getLength(), "= " +  values[j] + ";\n", docSolution.getStyle("regular"));
+			//result += "x" + generateSubscript(pedix[j][0]) + "\u208B" +generateSubscript(+pedix[j][1]) + "= " +  values[j] + ";\n";
 		}
-		return result;
+		//return result;
 	}
+	
 	public String generateSubscript(int i) {
 		StringBuilder sb = new StringBuilder();
 		for (char ch : String.valueOf(i).toCharArray()) {

@@ -312,6 +312,129 @@ public class Application {
 		buttonSave.setEnabled(true);
 		buttonContinue.setEnabled(true);
 
+		buttonSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0){
+				JFileChooser c = new JFileChooser(application_path);
+				String text=textArea.getText();
+				int rVal = c.showSaveDialog(frame);
+				if (rVal == JFileChooser.APPROVE_OPTION) {
+					application_path = c.getCurrentDirectory().toString() +File.separator + c.getSelectedFile().getName();
+					BufferedWriter writer = null;
+					try{
+						String[] tasks;
+						tasks = text.split("\n");
+						writer = new BufferedWriter( new FileWriter( application_path ));
+						for(int i = 0; i < tasks.length; i++){	
+							writer.write(tasks[i]);
+							writer.newLine();
+						}
+					}catch ( IOException e){
+						JOptionPane.showMessageDialog(frame,"An error occurred while saving the application file");
+						e.printStackTrace();
+					}finally{
+						try{ if ( writer != null) writer.close( );
+						}catch ( IOException ex) {ex.printStackTrace();}
+					}
+				}
+
+			}
+		}
+				);
+
+
+		JPanel solPanel = new JPanel();
+		solPanel.setLayout(new BorderLayout(0, 0));
+		JPanel solPanelArea = new JPanel();
+		solPanel.add(solPanelArea, BorderLayout.NORTH);
+		solPanelArea.setLayout(new BorderLayout(0, 0));
+
+		JLabel lblModel = new JLabel("Model:");
+		solPanelArea.add(lblModel, BorderLayout.NORTH);
+		lblModel.setHorizontalAlignment(SwingConstants.LEFT);
+		lblModel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		splitPane.setRightComponent(solPanel);
+
+		JPanel panel_2 = new JPanel();
+		//buttonNextSol.setHorizontalAlignment(SwingConstants.LEADING);
+		solPanel.add(panel_2, BorderLayout.CENTER);
+		panel_2.setLayout(new BorderLayout(0, 0));
+
+		JLabel lblNumberOfSolutions = new JLabel("Number of solutions: ");
+		solPanelArea.add(lblNumberOfSolutions, BorderLayout.SOUTH);
+		lblNumberOfSolutions.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNumberOfSolutions.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+
+		/*
+		JTextArea modelTextArea = new JTextArea();
+		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
+		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
+		modelTextArea.setRows(10);
+		modelTextArea.setLineWrap(true);
+		modelTextArea.setEditable(false);
+		modelTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
+		 */
+		JTextPane modelTextArea = new JTextPane();
+		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
+		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
+		scrollPane_1.setViewportView(modelTextArea);
+		scrollPane_1.setPreferredSize(new Dimension(200, 200));
+		modelTextArea.setEditable(false);
+
+		StyledDocument docModel = modelTextArea.getStyledDocument();
+
+		JLabel lblWorstCase = new JLabel("Worst-case blocking time:");
+		lblWorstCase.setHorizontalAlignment(SwingConstants.LEFT);
+		lblWorstCase.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_2.add(lblWorstCase, BorderLayout.NORTH);
+
+		/*	JTextArea solutionTextArea = new JTextArea();
+		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
+		panel_2.add(scrollPane_2, BorderLayout.CENTER);
+		solutionTextArea.setRows(10);
+		//solutionTextArea.setEnabled(false);
+		solutionTextArea.setEditable(false);
+		solutionTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
+		//solutionTextArea.setBackground(UIManager.getColor("Button.background"));
+		solutionTextArea.setBounds(12, 13, 500, 525);
+		 */
+		JTextPane solutionTextArea = new JTextPane();
+		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
+		panel_2.add(scrollPane_2, BorderLayout.CENTER);
+		scrollPane_2.setViewportView(solutionTextArea);
+		scrollPane_2.setPreferredSize(new Dimension(200, 200));
+		solutionTextArea.setEditable(false);
+
+		StyledDocument docSolution = solutionTextArea.getStyledDocument();
+
+		btnCplex.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String args= "";      
+				JFileChooser c = new JFileChooser(cplexjar_path);
+				// Demonstrate "Open" dialog:
+				int rVal = c.showOpenDialog(frame);
+				JTextField filename = new JTextField();
+				JTextField dir = new JTextField();
+				if (rVal == JFileChooser.APPROVE_OPTION) {
+					filename.setText(c.getSelectedFile().getName());
+					dir.setText(c.getCurrentDirectory().toString());
+					args = dir.getText() +File.separator + filename.getText();
+					JarFileLoader j = new JarFileLoader();
+					if(j.load(args)) {
+						cplexjar_path = args;
+						lblCplexModule.setText(cplexjar_path);
+						lblNewLabel.setEnabled(true);
+						lblNewLabel.setText("Insert a number for each resources (0 for normal execution), separated by a comma, each row defines a task (ex 0,1,4,1,0)");
+						textArea.setEditable(true);
+						textArea.setEnabled(true);
+						buttonLoad.setEnabled(true);
+						buttonSave.setEnabled(true);
+						buttonContinue.setEnabled(true);
+					}
+				}
+			}
+		});
+
 		buttonContinue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
 				firstChoosePanel.removeAll();
@@ -419,171 +542,15 @@ public class Application {
 					panel.updateUI();
 					radioButtonPanel.updateUI();
 
+					btnCalc.setText("Calculate");
+					modelTextArea.setText("");
+					solutionTextArea.setText("");
 				}
 
 
 			}
 		});		
 
-		buttonSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0){
-				JFileChooser c = new JFileChooser(application_path);
-				String text=textArea.getText();
-				int rVal = c.showSaveDialog(frame);
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					application_path = c.getCurrentDirectory().toString() +File.separator + c.getSelectedFile().getName();
-					BufferedWriter writer = null;
-					try{
-						String[] tasks;
-						tasks = text.split("\n");
-						writer = new BufferedWriter( new FileWriter( application_path ));
-						for(int i = 0; i < tasks.length; i++){	
-							writer.write(tasks[i]);
-							writer.newLine();
-						}
-					}catch ( IOException e){
-						JOptionPane.showMessageDialog(frame,"An error occurred while saving the application file");
-						e.printStackTrace();
-					}finally{
-						try{ if ( writer != null) writer.close( );
-						}catch ( IOException ex) {ex.printStackTrace();}
-					}
-				}
-
-			}
-		}
-				);
-
-
-		JPanel solPanel = new JPanel();
-		solPanel.setLayout(new BorderLayout(0, 0));
-		JPanel solPanelArea = new JPanel();
-		solPanel.add(solPanelArea, BorderLayout.NORTH);
-		solPanelArea.setLayout(new BorderLayout(0, 0));
-
-		JLabel lblModel = new JLabel("Model:");
-		solPanelArea.add(lblModel, BorderLayout.NORTH);
-		lblModel.setHorizontalAlignment(SwingConstants.LEFT);
-		lblModel.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		splitPane.setRightComponent(solPanel);
-
-		JPanel panel_2 = new JPanel();
-		//buttonNextSol.setHorizontalAlignment(SwingConstants.LEADING);
-		solPanel.add(panel_2, BorderLayout.CENTER);
-		panel_2.setLayout(new BorderLayout(0, 0));
-
-		JLabel lblNumberOfSolutions = new JLabel("Number of solutions: ");
-		solPanelArea.add(lblNumberOfSolutions, BorderLayout.SOUTH);
-		lblNumberOfSolutions.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNumberOfSolutions.setFont(new Font("Tahoma", Font.PLAIN, 15));
-
-
-/*
-		JTextArea modelTextArea = new JTextArea();
-		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
-		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
-		modelTextArea.setRows(10);
-		modelTextArea.setLineWrap(true);
-		modelTextArea.setEditable(false);
-		modelTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
-*/
-			JTextPane modelTextArea = new JTextPane();
-		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
-		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
-		scrollPane_1.setViewportView(modelTextArea);
-		scrollPane_1.setPreferredSize(new Dimension(200, 200));
-		modelTextArea.setEditable(false);
-
-		//test
-		
-		StyledDocument docModel = modelTextArea.getStyledDocument();
-/*		Style def = StyleContext.getDefaultStyleContext().
-				getStyle(StyleContext.DEFAULT_STYLE);
-
-		Style regular = doc.addStyle("regular", def);
-		StyleConstants.setFontFamily(def, "SansSerif");
-		Style s = doc.addStyle("small", regular);
-		StyleConstants.setFontSize(s, 15);
-		
-		try {
-			doc.insertString(doc.getLength(), "This is an editable JTextPane, ", doc.getStyle("regular"));
-			doc.insertString(doc.getLength(), "This is an editable JTextPane, ", doc.getStyle("small"));
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-*/
-
-
-		JPanel panel_3 = new JPanel();
-		panel_2.add(panel_3, BorderLayout.SOUTH);
-		panel_3.setLayout(new BorderLayout(0, 0));
-		JButton buttonNextSol = new JButton("Next solution...");
-		panel_3.add(buttonNextSol, BorderLayout.EAST);
-		buttonNextSol.setHorizontalAlignment(SwingConstants.RIGHT);
-		buttonNextSol.setEnabled(false);
-
-
-
-
-		JLabel lblWorstCase = new JLabel("Worst-case blocking time:");
-		lblWorstCase.setHorizontalAlignment(SwingConstants.LEFT);
-		lblWorstCase.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_2.add(lblWorstCase, BorderLayout.NORTH);
-
-
-/*	JTextArea solutionTextArea = new JTextArea();
-		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
-		panel_2.add(scrollPane_2, BorderLayout.CENTER);
-		solutionTextArea.setRows(10);
-		//solutionTextArea.setEnabled(false);
-		solutionTextArea.setEditable(false);
-		solutionTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		//solutionTextArea.setBackground(UIManager.getColor("Button.background"));
-		solutionTextArea.setBounds(12, 13, 500, 525);
-		*/
-		JTextPane solutionTextArea = new JTextPane();
-		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
-		panel_2.add(scrollPane_2, BorderLayout.CENTER);
-		scrollPane_2.setViewportView(modelTextArea);
-		scrollPane_2.setPreferredSize(new Dimension(200, 200));
-		solutionTextArea.setEditable(false);
-
-		StyledDocument docSolution = solutionTextArea.getStyledDocument();
-
-		buttonNextSol.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-				outputNextSolution(solutionTextArea);	
-			}});
-
-		btnCplex.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				String args= "";      
-				JFileChooser c = new JFileChooser(cplexjar_path);
-				// Demonstrate "Open" dialog:
-				int rVal = c.showOpenDialog(frame);
-				JTextField filename = new JTextField();
-				JTextField dir = new JTextField();
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					filename.setText(c.getSelectedFile().getName());
-					dir.setText(c.getCurrentDirectory().toString());
-					args = dir.getText() +File.separator + filename.getText();
-					JarFileLoader j = new JarFileLoader();
-					if(j.load(args)) {
-						cplexjar_path = args;
-						lblCplexModule.setText(cplexjar_path);
-						lblNewLabel.setEnabled(true);
-						lblNewLabel.setText("Insert a number for each resources (0 for normal execution), separated by a comma, each row defines a task (ex 0,1,4,1,0)");
-						textArea.setEditable(true);
-						textArea.setEnabled(true);
-						buttonLoad.setEnabled(true);
-						buttonSave.setEnabled(true);
-						buttonContinue.setEnabled(true);
-					}
-				}
-			}
-		});
 
 		btnEdit.addActionListener(new ActionListener() 
 		{
@@ -639,7 +606,7 @@ public class Application {
 				}
 				if (taskcalculation==0) rdbtnTask[0].setSelected(true);
 				//output(t,Integer.parseInt(spinnerResources.getValue().toString())+1, taskcalculation +1);
-				outputModel(t,getCurrentResources().size()+1, taskcalculation +1, modelTextArea,solutionTextArea,docModel);
+				outputModel(t,getCurrentResources().size()+1, taskcalculation +1, modelTextArea,solutionTextArea,docModel, docSolution);
 				modelTextArea.setCaretPosition(0);
 				outputNextSolution(solutionTextArea);
 				solutionTextArea.setCaretPosition(0);
@@ -737,8 +704,9 @@ public class Application {
 		return finalResult;
 	}
 
-	private void outputModel(processRT[] t, int numberOfS, int taskToBe, JTextPane modelTextArea,JTextArea solutionTextArea,StyledDocument docModel, StyledDocument docSolution)
+	private void outputModel(processRT[] t, int numberOfS, int taskToBe, JTextPane modelTextArea,JTextPane solutionTextArea,StyledDocument docModel, StyledDocument docSolution)
 	{
+		modelTextArea.setText("");
 		Notation nt = new Notation(t,numberOfS);
 		if (nt.phiMhstarstar(taskToBe).length == 0 ) {
 			modelTextArea.setText("No lower priority task can block task "+taskToBe);
@@ -813,8 +781,14 @@ public class Application {
 			}
 		}
 
-		solutionTextArea.setText(solEx.solutionToString(solToGet));
-
+		solutionTextArea.setText("");
+		//solutionTextArea.setText(solEx.solutionToString(solToGet));
+		try {
+			solEx.solutionToStringPro(solToGet);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		currentDisplaySolution++;
 		//solEx.go(solutionTextArea);
