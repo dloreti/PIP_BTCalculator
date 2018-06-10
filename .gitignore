@@ -1,3 +1,7 @@
 /PIP_BTCalculator/target/
 /PIP_BTCalculator/blp.sav
 /run/PIP_BTCalculator_lib/cplex.jar
+/.DS_Store
+/PIP_BTCalculator/.DS_Store
+/PIP_BTCalculator/src/model/.DS_Store
+/run/.DS_Store
