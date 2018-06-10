@@ -23,15 +23,15 @@ Write the execution sequences of your application in the text area. Each line re
 A number `N` (with `N!=0`) identifies a time unit of execution with mutually exclusive access to the shared resource `N`.
 An example can be load by selecting the file `run/example.txt` with the `Load` button.
 
-![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/img/img1.png)
+![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/PIP_BTCalculator/img/img1.png)
 
 Click the `Continue` button to switch to the colored interface. You can also change the colors associated to each resource with the corresponding buttons above.
 
-![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/img/img2.png)
+![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/PIP_BTCalculator/img/img2.png)
 
 Select the task to consider with the radio button on the left and click `Calculate` to see the model and the first solution that generates the worst case blocking.
 
-![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/img/img3.png)
+![alt text](https://raw.githubusercontent.com/dloreti/PIP_BTCalculator/master/PIP_BTCalculator/img/img3.png)
 
 Click the `Next solution` button to see other possible solutions with the same worst case blocking, if any.
 
