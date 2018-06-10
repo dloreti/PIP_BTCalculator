@@ -1,5 +1,6 @@
 package model;
 
+
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -7,18 +8,10 @@ import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-//import org.apache.commons.cli.CommandLine;
-
 import java.awt.Font;
-import java.awt.TextArea;
-
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -30,22 +23,16 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 import java.awt.event.ActionEvent;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.ButtonGroup;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import java.awt.Color;
 
 import javax.swing.BorderFactory;
@@ -54,37 +41,25 @@ import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-
-import java.awt.Component;
-import java.lang.reflect.*;
 
 public class Application {
 
 	private JFrame frame;
 	private ButtonGroup groupRadioButtonTask;
 	private JRadioButton[] rdbtnTask;
-	//private Color[] col;
 	private List<Color> col;
 	private Color testC;
 	private JButton[] colorButton;
 	private Random rand = new Random();
 	private int[][] timeLine;
 	private JLabel[][] grid;
-	//private String text = "";
 	private static final Font LABEL_FONT = new Font(Font.DIALOG, Font.PLAIN, 24);
 	private static final int MAX=50;
 
 	private static int currentDisplaySolution = 0 ;
 	private SolutionExtractor solEx;
 
-	private static String configfile_path = System.getProperty("user.dir")+File.separator+"config.properties"; //TO SPEEDUP DEBUG
-	
-	private static String cplexjar_path = ""; 
-	private static String cplexlib_path = ""; 
-	
-
-	private static String application_path =System.getProperty("user.dir")+File.separator+"examples"+File.separator+"timeCalc.txt";
+	private static String example_path =System.getProperty("user.dir"); //+File.separator+"example.txt";
 
 	private JTextArea textArea;
 
@@ -93,8 +68,6 @@ public class Application {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-
-		//CommandLine cl =CommandLineParse.parse(args);
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -119,13 +92,14 @@ public class Application {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1112, 624);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
 
-		File configFile = new File(configfile_path);
+		/*File configFile = new File(configfile_path);
 
 		try {
 			FileReader reader = new FileReader(configFile);
@@ -161,8 +135,9 @@ public class Application {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,"An error occurred while loading the configuration file. File not found.");
 		} 
-		
-		System.err.println("java.library.path is "+System.getProperty("java.library.path"));
+		 */
+
+		System.err.println("java.library.path is : \n"+System.getProperty("java.library.path"));
 
 		JLabel lblBlockingTimeCalculator = new JLabel("Blocking Time Calculator");
 		frame.getContentPane().add(lblBlockingTimeCalculator, BorderLayout.NORTH);
@@ -195,43 +170,15 @@ public class Application {
 		panel.add(choosingPanel, BorderLayout.NORTH);
 		choosingPanel.setLayout(new BorderLayout(0, 0));
 
-		JPanel firstChoosePanel = new JPanel();
-		firstChoosePanel.setBorder(null);
-		choosingPanel.add(firstChoosePanel, BorderLayout.NORTH);
-
 		JPanel colorPanel = new JPanel();
 		colorPanel.setBorder(null);
 		choosingPanel.add(colorPanel, BorderLayout.SOUTH);
 
-		/*
-		JButton getCbutton = new JButton("Reload Colors");
-		getCbutton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				loadColorPanel(colorPanel,calcPanel, buttonContinue);
-			}
-		});
-		 */
-
-
 		JPanel panelLabels = new JPanel();
 
 		//buttonDeclaration
-
-		//JButton btnOk_1 = new JButton("OK");	
 		JButton btnEdit = new JButton("Edit");
 		JButton btnCalc = new JButton("Calculate");	
-
-		JLabel lblCplexModule = new JLabel("No CPLEX module loaded. ");
-		firstChoosePanel.add(lblCplexModule);
-		lblCplexModule.setFont(new Font("Tahoma", Font.PLAIN, 15));
-
-		JButton btnCplex = new JButton("Load Cplex");
-		btnCplex.setToolTipText("Insert the path to your cplex.jar library");
-
-		firstChoosePanel.add(btnCplex);
-
-		/*removing now**/
-		firstChoosePanel.removeAll();
 
 		JPanel radioButtonPanel = new JPanel();
 		panel.add(radioButtonPanel, BorderLayout.WEST);
@@ -271,15 +218,15 @@ public class Application {
 		{
 			private BufferedReader reader;
 			public void actionPerformed(ActionEvent arg) {
-				JFileChooser c = new JFileChooser(application_path);
+				JFileChooser c = new JFileChooser(example_path);
 				// Demonstrate "Open" dialog:
 				int rVal = c.showOpenDialog(frame);
 				String text="";
 				if (rVal == JFileChooser.APPROVE_OPTION) {
-					application_path = c.getCurrentDirectory().toString()+ File.separator +c.getSelectedFile().getName();
+					example_path = c.getCurrentDirectory().toString()+ File.separator +c.getSelectedFile().getName();
 					FileReader file;
 					try {
-						file = new FileReader(application_path);
+						file = new FileReader(example_path);
 						reader = new BufferedReader(file);
 						String line = reader.readLine();
 						while (line != null) {
@@ -319,16 +266,16 @@ public class Application {
 
 		buttonSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
-				JFileChooser c = new JFileChooser(application_path);
+				JFileChooser c = new JFileChooser(example_path);
 				String text=textArea.getText();
 				int rVal = c.showSaveDialog(frame);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
-					application_path = c.getCurrentDirectory().toString() +File.separator + c.getSelectedFile().getName();
+					example_path = c.getCurrentDirectory().toString() +File.separator + c.getSelectedFile().getName();
 					BufferedWriter writer = null;
 					try{
 						String[] tasks;
 						tasks = text.split("\n");
-						writer = new BufferedWriter( new FileWriter( application_path ));
+						writer = new BufferedWriter( new FileWriter( example_path ));
 						for(int i = 0; i < tasks.length; i++){	
 							writer.write(tasks[i]);
 							writer.newLine();
@@ -369,16 +316,6 @@ public class Application {
 		lblNumberOfSolutions.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNumberOfSolutions.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
-
-		/*
-		JTextArea modelTextArea = new JTextArea();
-		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
-		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
-		modelTextArea.setRows(10);
-		modelTextArea.setLineWrap(true);
-		modelTextArea.setEditable(false);
-		modelTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		 */
 		JTextPane modelTextArea = new JTextPane();
 		JScrollPane scrollPane_1 = new JScrollPane(modelTextArea);
 		solPanelArea.add(scrollPane_1, BorderLayout.CENTER);
@@ -393,16 +330,7 @@ public class Application {
 		lblWorstCase.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		panel_2.add(lblWorstCase, BorderLayout.NORTH);
 
-		/*	JTextArea solutionTextArea = new JTextArea();
-		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
-		panel_2.add(scrollPane_2, BorderLayout.CENTER);
-		solutionTextArea.setRows(10);
-		//solutionTextArea.setEnabled(false);
-		solutionTextArea.setEditable(false);
-		solutionTextArea.setFont(new Font("Arial Black", Font.PLAIN, 12));
-		//solutionTextArea.setBackground(UIManager.getColor("Button.background"));
-		solutionTextArea.setBounds(12, 13, 500, 525);
-		 */
+
 		JTextPane solutionTextArea = new JTextPane();
 		JScrollPane scrollPane_2 = new JScrollPane(solutionTextArea);
 		panel_2.add(scrollPane_2, BorderLayout.CENTER);
@@ -412,50 +340,16 @@ public class Application {
 
 		StyledDocument docSolution = solutionTextArea.getStyledDocument();
 
-		/*
-		btnCplex.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				String args= "";      
-				JFileChooser c = new JFileChooser(cplexjar_path);
-				// Demonstrate "Open" dialog:
-				int rVal = c.showOpenDialog(frame);
-				JTextField filename = new JTextField();
-				JTextField dir = new JTextField();
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					filename.setText(c.getSelectedFile().getName());
-					dir.setText(c.getCurrentDirectory().toString());
-					args = dir.getText() +File.separator + filename.getText();
-					JarFileLoader j = new JarFileLoader();
-					if(j.load(args)) {
-						cplexjar_path = args;
-						lblCplexModule.setText(cplexjar_path);
-						lblNewLabel.setEnabled(true);
-						lblNewLabel.setText("Insert a number for each resources (0 for normal execution), separated by a comma, each row defines a task (ex 0,1,4,1,0)");
-						textArea.setEditable(true);
-						textArea.setEnabled(true);
-						buttonLoad.setEnabled(true);
-						buttonSave.setEnabled(true);
-						buttonContinue.setEnabled(true);
-					}
-				}
-			}
-		});
-		*/
 
 		buttonContinue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){
-				firstChoosePanel.removeAll();
-				//firstChoosePanel.add(getCbutton);
 				loadColorPanel(colorPanel,calcPanel, buttonContinue);
-				//colorPanel.add(getCbutton);
 
-				String text = textArea.getText();
 				timeLine=generateTaskNumber(textArea.getText());
 				int printi = 0, printj = 0;
 				boolean check = false;
 				for (int i = 0; i< timeLine.length;i++){
 					for (int j = 0; j< timeLine[i].length; j++){
-						//if(timeLine[i][j] > col.length-1){
 						if(timeLine[i][j] > getCurrentResources().size()-1){
 							printi = i+1;
 							printj = j+1;
@@ -535,11 +429,7 @@ public class Application {
 
 
 					lblNewLabel.setText("Use the upper buttons to choose the preferred colors for resources. Select the task and click Calculate to get the maximum blocking time");
-					//firstChoosePanel.remove(buttonSave);
-					//firstChoosePanel.remove(buttonLoad);
-					firstChoosePanel.updateUI();
 					panelLabels.setPreferredSize(new Dimension(x,y));
-					//panel.add(panelLabels);	
 					splitPane.setLeftComponent(panelLabels);
 					calcPanel.removeAll();
 					calcPanel.add(btnEdit);
@@ -579,9 +469,6 @@ public class Application {
 				buttonContinue.setEnabled(true);
 
 				colorPanel.removeAll();
-				/*removing now*/
-				//firstChoosePanel.add(lblCplexModule);
-				//firstChoosePanel.add(btnCplex);
 
 
 				radioButtonPanel.removeAll();

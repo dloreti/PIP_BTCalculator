@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>PIP_BTCalculator</groupId>
 	<artifactId>PIP_BTCalculator</artifactId>
-	<version>0.0.1-macosx</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<cplex.home>/Applications/CPLEX_Studio128/</cplex.home>
@@ -24,14 +24,10 @@
 		<dependency>
 			<groupId>ilog.cplex</groupId>
 			<artifactId>cplex</artifactId>
-			<version>1.0</version>
+			<version>12.8</version>
 			<scope>system</scope>
-			<systemPath>${cplex.home}/cplex/lib/cplex.jar</systemPath>
+ 			<systemPath>${cplex.home}/cplex/lib/cplex.jar</systemPath> 
 		</dependency>
-		<!-- <dependency> <groupId>commons-cli</groupId> <artifactId>commons-cli</artifactId> 
-			<version>1.4</version> </dependency> -->
-
-
 	</dependencies>
 
 
@@ -54,35 +50,14 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>model.Application</mainClass>
 						</manifest>
 					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<!-- optional -->
-							<!-- exclude copying test and provided dependencies -->
-							<includeScope>runtime</includeScope>
-							<excludeScope>provided</excludeScope>
-							<!-- optional -->
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 
 
 		</plugins>
